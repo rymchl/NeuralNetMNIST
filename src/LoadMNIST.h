@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef LOADMNIST
+#define LOADMNIST
+
 #include<iostream>
 #include<fstream>
 #include"Image.h"
@@ -97,3 +102,5 @@ std::vector<Image> read_mnist_images(std::string path, std::vector<unsigned int>
     }
     return out;
 }
+
+#endif

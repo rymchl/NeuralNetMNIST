@@ -21,6 +21,10 @@ void Image::put(int x, int y, int val){
     pixel_values[y][x] = val;
 }
 
+float Image::get(int x, int y){
+    return pixel_values[y][x];
+}
+
 void Image::print(){
     std::cout << "           <" << LABEL << ">:" << std::endl;
     for(int y = 0; y < HEIGHT; y++){

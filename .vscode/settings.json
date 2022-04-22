@@ -77,6 +77,8 @@
         "stack": "cpp",
         "string": "cpp",
         "string_view": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "__tree": "cpp",
+        "map": "cpp"
     }
 }
