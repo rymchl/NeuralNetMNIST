@@ -26,9 +26,14 @@ float Image::get(int x, int y){
 }
 
 void Image::print(){
-    std::cout << "           <" << LABEL << ">:" << std::endl;
+    std::cout << std::endl << "IMAGE OF A <" << LABEL << ">:" << std::endl;
+
+    //border
+    for(int i = 0; i <= (WIDTH / 2); i++) printf("+ ");
+    printf("\n");
+
     for(int y = 0; y < HEIGHT; y++){
-        std::string line = "";
+        std::string line = "+"; //border
         for(int x = 0; x < WIDTH; x++){
             int val = pixel_values[y][x];
             float brightness = fmax(fmin((float(val)/255.0f),1.0f),0.0f);            
@@ -39,6 +44,10 @@ void Image::print(){
             char b_char = ascii_lum[index];
             line += b_char;
         }
-        std::cout << line << std::endl;
+        std::cout << line + "+" << std::endl;
     }
+
+//border
+    for(int i = 0; i <= (WIDTH / 2); i++) printf("+ ");
+    printf("\n\n");
 }

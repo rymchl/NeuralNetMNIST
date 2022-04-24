@@ -3,16 +3,25 @@
 #define NETWORK
 
 #include <vector>
-#include "Node.h"
+#include<math.h>
+#include<iostream>
+#include<map>
+
+#include"Util.h"
 #include "Image.h"
+#include "Layer.h"
 
 class Network{
 public:
-    std::vector< std::vector<Node> > layers;
+    std::vector<Layer> layers;
+    
     Network();
-    unsigned int classify(Image image);
-    void clear_activations();
-    void print_structure();
+
+    void print_classification(Image image, std::vector<float> classification);
+    std::vector<float> classify(Image image);
+    float cost(int label, std::vector<float> classification);
+    float total_cost(std::vector<Image> image_set);
+    void train(std::vector<Image> training_set, int iterations);
 };
 
 #endif
