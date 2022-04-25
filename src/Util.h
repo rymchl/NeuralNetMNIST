@@ -42,4 +42,12 @@ static float der_sigmoid(float x){
     return exp(-x) / pow(1 + exp(-x), 2);
 }
 
+static int max_index(std::vector<float> vec) {
+    int index = 0;
+    for (int i = 0; i < vec.size(); i++) {
+        if (vec[i] > vec[index]) index = i;
+    }
+    return index;
+}
+
 #endif

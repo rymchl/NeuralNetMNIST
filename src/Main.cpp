@@ -19,9 +19,7 @@ int main(){
     training_images = read_mnist_images(TRAINING_IMAGE_SET_PATH, training_labels);
 
     testing_labels = read_mnist_labels(TEST_LABELS_SET_PATH);
-    testing_images = read_mnist_images(TEST_IMAGE_SET_PATH, testing_labels);
-
-
+    testing_images = read_mnist_images(TEST_IMAGE_SET_PATH, testing_labels); 
     
     std::cout << "FINISHED LOADING DATA." << std::endl << std::endl;
 
@@ -33,17 +31,23 @@ int main(){
 
     std::cout << "CALCULATING START NETWORK COST..." << std::endl << std::endl;
 
-    std::cout << "NETWORK COST OF TESTING SET: " << network.total_cost(testing_images) << std::endl << std::endl;
+    std::cout << "NETWORK COST: " << network.total_cost(testing_images) << std::endl << std::endl;
+    std::cout << 100 * network.get_classification_rate(testing_images) << "% ACCURACY" << std::endl;
 
     std::cout << "TRAINING..." << std::endl << std::endl;
 
-    network.train(training_images,3);
 
-    std::cout << "NETWORK COST : " << network.total_cost(testing_images) << std::endl << std::endl;
+    network.train(training_images,100);
 
-    int index = 4;
-    std::vector<float> classification = network.classify(testing_images[index]);
-    network.print_classification(testing_images[index], classification);
+    std::cout << "NETWORK COST:" << network.total_cost(testing_images) << std::endl << std::endl;
+
+    //int index = 4;
+    //std::vector<float> classification = network.classify(testing_images[index]);
+    //network.print_classification(testing_images[index], classification);
+    
+    std::cout << 100 * network.get_classification_rate(testing_images) << "% ACCURACY" << std::endl;
+
+    network.save_weights_biases();
 
     return 0;
 }

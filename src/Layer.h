@@ -8,6 +8,8 @@
 class Layer{
 public:
     unsigned int ID;
+    unsigned int SIZE;
+
     std::vector< std::vector < float > > weights;
     std::vector< float > biases;
 
