@@ -1,5 +1,6 @@
 #include "LoadMNIST.h"
 #include "Network.h"
+#include "unistd.h"
 
 #define TRAINING_IMAGE_SET_PATH "MNIST/train-images.idx3-ubyte"
 #define TRAINING_LABELS_SET_PATH "MNIST/train-labels.idx1-ubyte"
@@ -15,11 +16,11 @@ int main(){
 
     std::cout << std::endl << "LOADING DATA..." << std::endl << std::endl;
 
-    training_labels = read_mnist_labels(TRAINING_LABELS_SET_PATH);
-    training_images = read_mnist_images(TRAINING_IMAGE_SET_PATH, training_labels);
-
     testing_labels = read_mnist_labels(TEST_LABELS_SET_PATH);
     testing_images = read_mnist_images(TEST_IMAGE_SET_PATH, testing_labels); 
+
+    training_labels = read_mnist_labels(TRAINING_LABELS_SET_PATH);
+    training_images = read_mnist_images(TRAINING_IMAGE_SET_PATH, training_labels);
     
     std::cout << "FINISHED LOADING DATA." << std::endl << std::endl;
 
@@ -29,23 +30,12 @@ int main(){
 
     std::cout << "FINISHED INITIALIZING NETWORK." << std::endl << std::endl;
 
-    std::cout << "CALCULATING START NETWORK COST..." << std::endl << std::endl;
-
-    std::cout << "NETWORK COST: " << network.total_cost(testing_images) << std::endl << std::endl;
-    std::cout << 100 * network.get_classification_rate(testing_images) << "% ACCURACY" << std::endl;
-
     std::cout << "TRAINING..." << std::endl << std::endl;
 
 
-    network.train(training_images,100);
-
-    std::cout << "NETWORK COST:" << network.total_cost(testing_images) << std::endl << std::endl;
-
-    //int index = 4;
-    //std::vector<float> classification = network.classify(testing_images[index]);
-    //network.print_classification(testing_images[index], classification);
+    network.train(training_images,testing_images,10000,2);
     
-    std::cout << 100 * network.get_classification_rate(testing_images) << "% ACCURACY" << std::endl;
+    std::cout << "NETWORK COST:" << network.total_cost(testing_images) << std::endl << std::endl;
 
     network.save_weights_biases();
 

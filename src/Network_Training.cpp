@@ -24,7 +24,9 @@ float Network::calc_dCdA(unsigned int id, unsigned int j, std::vector<std::vecto
 
 }
 
-void Network::train(std::vector<Image> training_set, int iterations) {
+void Network::train(std::vector<Image> training_set, std::vector<Image> testing_set, int sample_size, int iterations) {
+
+    std::cout << 100 * get_classification_rate(testing_set) << "% ACCURACY" << std::endl;
 
     if (iterations <= 0) return;
     else std::cout << "TRAINING 1 OF " << iterations << " ITERATIONS..." << std::endl;
@@ -46,10 +48,10 @@ void Network::train(std::vector<Image> training_set, int iterations) {
     bias_changes.resize(layers.size());
     for (int i = 0; i < bias_changes.size(); i++) bias_changes[i].resize(layers[i].biases.size());
 
-    int image_index = 1;
+    std::vector<Image> sample_set = sample<Image>(sample_size, training_set);
 
     //Learn on all images in training set;
-    for (Image image : training_set) {
+    for (Image image : sample_set) {
 
         //printf("%.2f\n", 100 * float(image_index++) / training_set.size());
 
@@ -63,8 +65,6 @@ void Network::train(std::vector<Image> training_set, int iterations) {
             activations[i].resize(layers[i].biases.size());
             z_values[i].resize(layers[i].biases.size());
         }
-
-       
 
         for (unsigned int y = 0; y < image.HEIGHT; y++) {
             for (unsigned int x = 0; x < image.WIDTH; x++) {
@@ -114,33 +114,7 @@ void Network::train(std::vector<Image> training_set, int iterations) {
     }
 
 
-    std::cout << "TOOK " << (std::clock() - start) / (double)CLOCKS_PER_SEC << " SECONDS." << std::endl;
-    //std::cout << "NETWORK COST : " << total_cost(training_set) << std::endl << std::endl;
+    print_as_time((std::clock() - start) / (double)CLOCKS_PER_SEC);
 
-
-    train(training_set, iterations - 1);
+    train(training_set, testing_set, sample_size, iterations - 1);
 }
-
-/*
-            Layer* layer = &layers[layer_id];
-            std::vector<float> activation_changes;
-            activation_changes.resize(layers[layer_id - 1].SIZE);
-            //calculate nudge for weights and biases of this layer
-            for (int j = 0; j < layer->weights.size(); j++) {
-                for (int k = 0; k < layer->weights[j].size(); k++) {
-
-                    float d1 = activations[layer_id - 1][k];
-                    float d2 = der_sigmoid(z_values[layer_id][j]);
-                    float d3 = 2 * (activations[layer_id][j] - y[j]);
-
-                    float d_biases = d2 * d3;
-                    float d_weight = d1 * d_biases;
-                    float d_aLM1 = layer->weights[j][k] * d2 * d3;
-
-                    bias_changes[layer_id][j] -= d_biases;
-                    weight_changes[layer_id][j][k] -= d_weight;
-                    activation_changes[k] -= d_aLM1;
-
-                }
-            }
-            */

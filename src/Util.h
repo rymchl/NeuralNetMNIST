@@ -50,4 +50,36 @@ static int max_index(std::vector<float> vec) {
     return index;
 }
 
+template <class T>  
+static std::vector<T> sample(int n, std::vector<T> vec){
+    std::vector<T> out; 
+    for(int i = 0; i < n; i++) {
+        //index = random int between [0, vec.size() - i - 1]
+        int selection = rand() % ((int)vec.size() - i);
+        out.push_back(vec[selection]);
+
+        T swap = vec[vec.size() - i - 1];
+        vec[vec.size() - i - 1] = vec[selection];
+        vec[selection] = swap;
+    }
+    return out;
+}
+
+
+static void print_as_time(double seconds){
+
+    printf("seconds: %f\n",seconds);
+
+    int seconds_out = int(seconds) % 60;
+    int minutes_out = (int(seconds)/60) % 60;
+    int hours_out = (int(seconds)/3600) % 60;
+
+    std::string str_out = "";
+    if(hours_out > 0) str_out += std::to_string(hours_out) + "h:";
+    if(minutes_out > 0) str_out += std::to_string(minutes_out) + "m:";
+    str_out += std::to_string(seconds_out) + "s\n";
+
+    std::cout << str_out;
+}
+
 #endif
