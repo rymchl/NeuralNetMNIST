@@ -7,8 +7,8 @@ Layer::Layer(unsigned int ID, int num_nodes, int num_nodes_previous_layer): ID(I
         for(int j = 0; j < num_nodes_previous_layer; j++){
             node_weights.push_back( ID==0 ? 1 : rand_float());
         }
-        //biases.push_back(ID==0 ? 0 : rand_float());
-        biases.push_back(0);
+        biases.push_back(ID==0 ? 0 : rand_float());
+        //biases.push_back(0);
         weights.push_back(node_weights);
     }
 }

@@ -1,41 +1,55 @@
-#include "LoadMNIST.h"
+
+#include "mnist_reader_less.hpp"
+
 #include "Network.h"
-#include "unistd.h"
 
-#define TRAINING_IMAGE_SET_PATH "MNIST/train-images.idx3-ubyte"
-#define TRAINING_LABELS_SET_PATH "MNIST/train-labels.idx1-ubyte"
-#define TEST_IMAGE_SET_PATH "MNIST/t10k-images.idx3-ubyte"
-#define TEST_LABELS_SET_PATH "MNIST/t10k-labels.idx1-ubyte"
-
-int main(){
-    
+int main() {
     srand(time(0));
 
-    std::vector<Image> training_images, testing_images;
-    std::vector<unsigned int> training_labels, testing_labels;
+    int TOTAL_EPOCHS = 10000;
 
     std::cout << std::endl << "LOADING DATA..." << std::endl << std::endl;
 
-    testing_labels = read_mnist_labels(TEST_LABELS_SET_PATH);
-    testing_images = read_mnist_images(TEST_IMAGE_SET_PATH, testing_labels); 
+    auto dataset = mnist::read_dataset();
 
-    training_labels = read_mnist_labels(TRAINING_LABELS_SET_PATH);
-    training_images = read_mnist_images(TRAINING_IMAGE_SET_PATH, training_labels);
-    
+    std::vector<Image> training_images, testing_images;
+    parse_as_images(training_images,
+        testing_images,
+        dataset.training_images,
+        dataset.test_images,
+        dataset.training_labels,
+        dataset.test_labels);
+
+
+
     std::cout << "FINISHED LOADING DATA." << std::endl << std::endl;
 
     std::cout << "INITIALIZING NETWORK..." << std::endl << std::endl;
 
     Network network;
 
+    //network.test(testing_images);
+    //return 0;
+
     std::cout << "FINISHED INITIALIZING NETWORK." << std::endl << std::endl;
 
     std::cout << "TRAINING..." << std::endl << std::endl;
 
+    int epochs = TOTAL_EPOCHS;
 
-    network.train(training_images,testing_images,10000,2);
+    while(epochs > 0){
+        printf("%d/%d\n", TOTAL_EPOCHS - epochs + 1, TOTAL_EPOCHS);
+        network.train(training_images, testing_images, 10000);
+        epochs--;
+    }
     
-    std::cout << "NETWORK COST:" << network.total_cost(testing_images) << std::endl << std::endl;
+    network.test(training_images);
+
+    network.test(testing_images);
+
+    for (Image image : sample(10, testing_images)) {
+        network.print_classification(image, network.classify(image));
+    }
 
     network.save_weights_biases();
 

@@ -29,7 +29,7 @@ void Image::print(){
     std::cout << std::endl << "IMAGE OF A <" << LABEL << ">:" << std::endl;
 
     //border
-    for(unsigned int i = 0; i <= (WIDTH / 2); i++) printf("+ ");
+    for(unsigned int i = 0; i <= (WIDTH / 2); i++) printf("+ + ");
     printf("\n");
 
     for(unsigned int y = 0; y < HEIGHT; y++){
@@ -40,14 +40,17 @@ void Image::print(){
             
             int max = ascii_lum_length-1;
             int index = int(brightness*max);
+
+            if (index == 0 && brightness > 0) index = 1;
             
             char b_char = ascii_lum[index];
             line += b_char;
+            line += b_char;
         }
-        std::cout << line + "+" << std::endl;
+        std::cout << line << std::endl;
     }
 
 //border
-    for(int i = 0; i <= (WIDTH / 2); i++) printf("+ ");
+    for(int i = 0; i <= (WIDTH / 2); i++) printf("+ + ");
     printf("\n\n");
 }

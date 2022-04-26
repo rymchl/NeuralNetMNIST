@@ -19,19 +19,20 @@ class Network{
 public:
     std::vector<Layer> layers;
     unsigned int NUM_LAYERS;
-    
     std::map<std::pair<unsigned int, unsigned int>, float> known_dCdA_values;
     
     Network();
 
-    void print_classification(Image image, std::vector<float> classification);
-    std::vector<float> classify(Image image);
     float cost(int label, std::vector<float> classification);
-    float total_cost(std::vector<Image> image_set);
-    void train(std::vector<Image> training_set, std::vector<Image> testing_set, int sample_size, int iterations);
-    float get_classification_rate(std::vector<Image> image_set);
     float calc_dCdA(unsigned int id, unsigned int j, std::vector<std::vector<float> > z_values, std::vector<std::vector<float> > activations, std::vector<float> y);
+    
+    void print_classification(Image image, std::vector<float> classification);
     void save_weights_biases();
+    void train(std::vector<Image> training_set, std::vector<Image> testing_set, int sample_size);
+    void test(std::vector<Image> testing_set);
+
+    std::vector<float> classify(Image image);
+
 };
 
 #endif

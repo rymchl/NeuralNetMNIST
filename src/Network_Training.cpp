@@ -13,7 +13,7 @@ float Network::calc_dCdA(unsigned int id, unsigned int j, std::vector<std::vecto
             for (int x = 0; x < layers[id + 1].SIZE; x++) {
                 val +=
                     layers[id + 1].weights[x][j]
-                    * der_sigmoid(z_values[id + 1][x])
+                    * der_sigmoid(z_values[id][x])
                     * calc_dCdA(id + 1, x, z_values, activations, y);
             }
             known_dCdA_values[pair] = val;
@@ -24,13 +24,7 @@ float Network::calc_dCdA(unsigned int id, unsigned int j, std::vector<std::vecto
 
 }
 
-void Network::train(std::vector<Image> training_set, std::vector<Image> testing_set, int sample_size, int iterations) {
-
-    std::cout << 100 * get_classification_rate(testing_set) << "% ACCURACY" << std::endl;
-
-    if (iterations <= 0) return;
-    else std::cout << "TRAINING 1 OF " << iterations << " ITERATIONS..." << std::endl;
-
+void Network::train(std::vector<Image> training_set, std::vector<Image> testing_set, int sample_size) {
     std::clock_t start = clock();
 
     //layer//weight[to][from]
@@ -52,6 +46,8 @@ void Network::train(std::vector<Image> training_set, std::vector<Image> testing_
 
     //Learn on all images in training set;
     for (Image image : sample_set) {
+
+        //image.print();
 
         //printf("%.2f\n", 100 * float(image_index++) / training_set.size());
 
@@ -84,37 +80,43 @@ void Network::train(std::vector<Image> training_set, std::vector<Image> testing_
             y.push_back((i == image.LABEL) ? 1 : 0);
         }
 
+        known_dCdA_values.clear();
+
         //Backprop
         for (unsigned int id = layers.size() - 1; id > 0; id--) {
             for (int j = 0; j < layers[id].SIZE; j++) {
+
+                float dSig = der_sigmoid(z_values[id][j]);
+                float dCdA = calc_dCdA(id, j, z_values, activations, y);
+
+                bias_changes[id][j] += dSig * dCdA;
                 for (int k = 0; k < layers[id - 1].SIZE; k++) {
-                    weight_changes[id][j][k] -=
+                    weight_changes[id][j][k] +=
                         activations[id - 1][k]
-                        * der_sigmoid(z_values[id][j])
-                        * calc_dCdA(id,j,z_values,activations,y);
+                        * dSig
+                        * dCdA;
+
                 }
+
             }
         }
-
-        //update LP1_der
     }
 
-    float conv_param = 0.5f;
-    int num_examples = (int)training_set.size();
+    float conv_param = 0.4f;
+    float C = conv_param / sample_size;
 
-    float C = conv_param / num_examples;
 
     for (int layer_id = 1; layer_id < layers.size(); layer_id++) {
         for (int j = 0; j < layers[layer_id].weights.size(); j++) {
-            layers[layer_id].biases[j] += C * bias_changes[layer_id][j];
+            layers[layer_id].biases[j] -= C * bias_changes[layer_id][j];
             for (int k = 0; k < layers[layer_id].weights[j].size(); k++) {
-                layers[layer_id].weights[j][k] += C * weight_changes[layer_id][j][k];
+                layers[layer_id].weights[j][k] -= C * weight_changes[layer_id][j][k];
             }
         }
     }
 
 
     print_as_time((std::clock() - start) / (double)CLOCKS_PER_SEC);
+    printf("\0\n");
 
-    train(training_set, testing_set, sample_size, iterations - 1);
 }
