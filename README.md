@@ -3,6 +3,7 @@ A simple neural network built to classify hand-writted digits from the MNIST dat
 
 To load this dataset, I used the following: 
   https://github.com/wichtounet/mnist
+  
 Other than that, everything is from scratch.
 
 It is initally set up to load a presaved network I have trained to achieve an accuracy of around 85% on the testing dataset. 
