@@ -11,6 +11,8 @@
 
 #define LOG(x) std::cout << x << std::endl
 
+//Parses the input vectors (args 2,3,4,5) into vectors of my Image class
+//and puts them into the input sets (args 1 and 2) directly. 
 template <typename Pixel = uint8_t, typename Label = uint8_t>
 static void parse_as_images(std::vector<Image> &training_set, std::vector<Image> &testing_set,
                             std::vector<std::vector<Pixel>> training_images,
@@ -45,23 +47,27 @@ static void parse_as_images(std::vector<Image> &training_set, std::vector<Image>
     }
 }
 
+//Random float value between -1 and 1 inclusive [-1,1].
 static float rand_float(){ 
     return (float)(rand()%1001)/500.0f - 1.0f;
-    //return (float)(rand() % 1001) / 1000.0f;
 }
 
+//Assumes a and b of the same size
 static float dot_prod(std::vector<float> a, std::vector<float> b){
     float out = 0;
     for(int i = 0; i < a.size(); i++){ out += a[i]*b[i]; }
     return out;
 }
 
-
+//Assumes a and b of the same size
 static std::vector<float> add_vec(std::vector<float> a, std::vector<float> b){
     for(int i = 0; i < a.size(); i++){ a[i] += b[i]; }
     return a;
 }
 
+//Multiply the input matrix with the input vector.
+//Assumes that the vector is of the same size as the matrices rows, 
+//and that every row in the matrix is this size.
 static std::vector<float> mat_vec_mul(std::vector< std::vector < float > > mat, std::vector< float > vec){
     std::vector<float> out;
     for(std::vector<float> row : mat){
@@ -70,17 +76,20 @@ static std::vector<float> mat_vec_mul(std::vector< std::vector < float > > mat, 
     return out;
 }
 
+//Applys the sigmoid function to every element in vec
 static std::vector<float> apply_sigmoid(std::vector<float> vec){
     std::vector<float> out;
     for (float x : vec) out.push_back(1.0f / (1.0f + exp(-x)));
     return out;
 }
 
+//Derivative of the sigmoid function
 static float der_sigmoid(float x){
     return exp(-x) / pow(1 + exp(-x), 2);
 }
 
-static int max_index(std::vector<float> vec) {
+template <class T>
+static int max_index(std::vector<T> vec) {
     int index = 0;
     for (int i = 0; i < vec.size(); i++) {
         if (vec[i] > vec[index]) index = i;
@@ -88,6 +97,7 @@ static int max_index(std::vector<float> vec) {
     return index;
 }
 
+//Randomly samples n elements from the input vec
 template <class T>  
 static std::vector<T> sample(int n, std::vector<T> vec){
     std::vector<T> out; 
@@ -102,32 +112,20 @@ static std::vector<T> sample(int n, std::vector<T> vec){
     }
     return out;
 }
-template <class T>
-static std::vector<std::vector<T>> transpose(std::vector<std::vector<T>> mat) {
-    std::vector<std::vector<T>> out;
-    out.resize(mat[0].size());
-    for (int i = 0; i < out.size(); i++) out[i].resize(mat.size());
 
-    for (int i = 0; i < mat.size(); i++) {
-        for (int j = 0; j < mat[i].size(); i++) {
-            out[j][i] = mat[i][j];
-        }
-    }
-    return out;
-}
-
+//Prints the seconds as XXh:XXm:XXs
 static void print_as_time(double seconds){
 
     int seconds_out = int(seconds) % 60;
     int minutes_out = (int(seconds)/60) % 60;
     int hours_out = (int(seconds)/3600) % 60;
 
-    std::string str_out = "";
+    std::string str_out = "Took : ";
     if(hours_out > 0) str_out += std::to_string(hours_out) + "h:";
     if(minutes_out > 0) str_out += std::to_string(minutes_out) + "m:";
     str_out += std::to_string(seconds_out) + "s\n";
 
-    std::cout << str_out;
+    std::cout << str_out << std::endl;
 }
 
 #endif
